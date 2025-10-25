@@ -10,7 +10,7 @@ DB_BASE = str(os.environ.get("DB_SERVICE_BASE_URL"))
 
 @dataclass
 class DBRoutes:
-    SERVICE_PING = "/ping"
+    HEALTH_PING = "/ping"
 
     AUTH_REGISTER = "/auth/register"
     AUTH_LOGIN = "/auth/login"

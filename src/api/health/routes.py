@@ -6,11 +6,11 @@ from src.api.config import DB_BASE, DBRoutes
 
 load_dotenv()
 
-router_service = APIRouter(tags=["service"])
+router_health = APIRouter(tags=["health"])
 
 
-@router_service.get("/ping_db")
+@router_health.get("/ping_db")
 async def send_ping():
     async with httpx.AsyncClient() as client:
-        response = await client.post(DB_BASE + DBRoutes.SERVICE_PING)
-        return {"from_db_service": response.json()}
+        response = await client.post(DB_BASE + DBRoutes.HEALTH_PING)
+        return {"from_database_service": response.json()}
