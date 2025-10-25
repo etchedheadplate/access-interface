@@ -1,18 +1,11 @@
-import os
-
-import httpx
 from dotenv import load_dotenv
 from fastapi import FastAPI
+
+from src.api.auth.routes import router_auth
+from src.api.service.routes import router_service
 
 load_dotenv()
 
 app = FastAPI()
-
-DB_SERVICE_API_URL = str(os.environ.get("DB_SERVICE_API_URL"))
-
-
-@app.get("/ping_db")
-async def send_ping():
-    async with httpx.AsyncClient() as client:
-        response = await client.get(DB_SERVICE_API_URL + "/ping")
-        return {"from_db_service": response.json()}
+app.include_router(router_service)
+app.include_router(router_auth)
