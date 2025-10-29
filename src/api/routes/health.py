@@ -2,15 +2,15 @@ import httpx
 from dotenv import load_dotenv
 from fastapi import APIRouter
 
-from src.api.config import DB_BASE, DBRoutes
+from ..config import DB_BASE, Routes
 
 load_dotenv()
 
-router_health = APIRouter(tags=["health"])
+router = APIRouter(tags=["Health"])
 
 
-@router_health.get("/ping_db")
+@router.get("/ping_db")
 async def send_ping():
     async with httpx.AsyncClient() as client:
-        response = await client.post(DB_BASE + DBRoutes.HEALTH_PING)
+        response = await client.post(DB_BASE + Routes.Open.PING)
         return {"from_database_service": response.json()}
