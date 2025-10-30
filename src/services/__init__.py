@@ -1,4 +1,4 @@
-from schemas import (
+from .schemas import (
     AccessPermissionRequest,
     ExcludeFromGroupRequest,
     GetResourcePermissionRequest,
@@ -6,7 +6,6 @@ from schemas import (
     RemovePermissionRequest,
     ViewUserGroups,
 )
-
 from .tasks import (
     access_permission,
     exclude_from_group,
