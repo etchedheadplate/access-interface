@@ -1,9 +1,9 @@
 from fastapi import APIRouter
 
-from .routes.access import router as access_router
-from .routes.auth import router as auth_router
-from .routes.database import router as database_router
-from .routes.health import router as health_router
+from .access.routes import router as access_router
+from .auth.routes import router as auth_router
+from .database import router as database_router
+from .ping import router as health_router
 
 router = APIRouter()
 router.include_router(health_router)
