@@ -21,7 +21,7 @@ from src.services import (
     view_user_groups,
 )
 
-from .schemas import StatusCreatedResponse, StatusRejectedResponse
+from .schemas import StatusCreatedResponse, StatusUnprocessableResponse
 
 load_dotenv()
 
@@ -35,7 +35,7 @@ async def request_permission_access(user_id: UUID, permission_id: PositiveInt, t
         await send_message(EXCHANGE_NAME, ROUTING_KEY_TASK, task.model_dump())
         status = StatusCreatedResponse(request_id=task.request_id)
     else:
-        status = StatusRejectedResponse(request_id="")
+        status = StatusUnprocessableResponse(request_id="")
 
     await send_message(EXCHANGE_NAME, ROUTING_KEY_STATUS, status.model_dump())
 
@@ -49,7 +49,7 @@ async def request_join_group(user_id: UUID, group_id: PositiveInt, token: str = 
         await send_message(EXCHANGE_NAME, ROUTING_KEY_TASK, task.model_dump())
         status = StatusCreatedResponse(request_id=task.request_id)
     else:
-        status = StatusRejectedResponse(request_id="")
+        status = StatusUnprocessableResponse(request_id="")
 
     await send_message(EXCHANGE_NAME, ROUTING_KEY_STATUS, status.model_dump())
 
@@ -65,7 +65,7 @@ async def request_remove_user_permission(
         await send_message(EXCHANGE_NAME, ROUTING_KEY_TASK, task.model_dump())
         status = StatusCreatedResponse(request_id=task.request_id)
     else:
-        status = StatusRejectedResponse(request_id="")
+        status = StatusUnprocessableResponse(request_id="")
 
     await send_message(EXCHANGE_NAME, ROUTING_KEY_STATUS, status.model_dump())
 
@@ -79,7 +79,7 @@ async def request_exclude_user_from_group(user_id: UUID, group_id: PositiveInt, 
         await send_message(EXCHANGE_NAME, ROUTING_KEY_TASK, task.model_dump())
         status = StatusCreatedResponse(request_id=task.request_id)
     else:
-        status = StatusRejectedResponse(request_id="")
+        status = StatusUnprocessableResponse(request_id="")
 
     await send_message(EXCHANGE_NAME, ROUTING_KEY_STATUS, status.model_dump())
 
@@ -93,7 +93,7 @@ async def request_view_user_groups(user_id: UUID, token: str = Depends(oauth2_sc
         await send_message(EXCHANGE_NAME, ROUTING_KEY_TASK, task.model_dump())
         status = StatusCreatedResponse(request_id=task.request_id)
     else:
-        status = StatusRejectedResponse(request_id="")
+        status = StatusUnprocessableResponse(request_id="")
 
     await send_message(EXCHANGE_NAME, ROUTING_KEY_STATUS, status.model_dump())
 
@@ -107,7 +107,7 @@ async def request_get_resource_permission(user_id: UUID, resource_id: PositiveIn
         await send_message(EXCHANGE_NAME, ROUTING_KEY_TASK, task.model_dump())
         status = StatusCreatedResponse(request_id=task.request_id)
     else:
-        status = StatusRejectedResponse(request_id="")
+        status = StatusUnprocessableResponse(request_id="")
 
     await send_message(EXCHANGE_NAME, ROUTING_KEY_STATUS, status.model_dump())
 

@@ -6,6 +6,6 @@ class StatusCreatedResponse(BaseModel):
     request_status: str = "created"
 
 
-class StatusRejectedResponse(BaseModel):
+class StatusUnprocessableResponse(BaseModel):
     request_id: str
-    request_status: str = "rejected"
+    request_status: str = "unprocessable"
