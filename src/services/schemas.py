@@ -36,11 +36,10 @@ class ExcludeFromGroupRequest(BaseRequest):
 
 class ViewUserGroups(BaseRequest):
     request_type: str = "view_user_groups"
+    user_id: str
     user_groups: list[str] = [
         "",
     ]
-    user_id: str
-    pass
 
 
 class GetResourcePermissionRequest(BaseRequest):
@@ -50,4 +49,3 @@ class GetResourcePermissionRequest(BaseRequest):
     resource_permissions: list[str] = [
         "",
     ]
-    pass
