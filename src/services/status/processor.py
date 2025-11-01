@@ -3,6 +3,7 @@ from typing import Any
 from src.services.status.schemas import (
     StatusCreatedResponse,
     StatusDoneResponse,
+    StatusNotFoundResponse,
     StatusRejectedResponse,
     StatusUnprocessableResponse,
     StatusValidatedResponse,
@@ -33,4 +34,5 @@ class StatusMapping:
         "rejected": StatusRejectedResponse,
         "done": StatusDoneResponse,
         "unprocessable": StatusUnprocessableResponse,
+        "not_found": StatusNotFoundResponse,
     }
