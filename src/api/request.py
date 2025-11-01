@@ -6,7 +6,7 @@ from pydantic import PositiveInt
 
 from src.api.auth import oauth2_scheme
 from src.logger import logger
-from src.queue import EXCHANGE_NAME, ROUTING_KEY_STATUS, ROUTING_KEY_TASK, send_message
+from src.queue import EXCHANGE_NAME, ROUTING_KEY_STATUS_CREATED, ROUTING_KEY_TASK, send_message
 from src.services.status.schemas import (
     BaseStatus,
     StatusCreatedResponse,
@@ -44,7 +44,7 @@ async def request_permission_access(user_id: UUID, permission_id: PositiveInt, t
     else:
         message_out = StatusUnprocessableResponse(request_id="")
 
-    await send_message(EXCHANGE_NAME, ROUTING_KEY_STATUS, message_out.model_dump())
+    await send_message(EXCHANGE_NAME, ROUTING_KEY_STATUS_CREATED, message_out.model_dump())
     logger.info(f"OUT: request_id={message_out.request_id}, request_status={message_out.request_status}")
 
     return message_out
@@ -62,7 +62,7 @@ async def request_join_group(user_id: UUID, group_id: PositiveInt, token: str = 
     else:
         message_out = StatusUnprocessableResponse(request_id="")
 
-    await send_message(EXCHANGE_NAME, ROUTING_KEY_STATUS, message_out.model_dump())
+    await send_message(EXCHANGE_NAME, ROUTING_KEY_STATUS_CREATED, message_out.model_dump())
     logger.info(f"OUT: request_id={message_out.request_id}, request_status={message_out.request_status}")
 
 
@@ -80,7 +80,7 @@ async def request_remove_user_permission(
     else:
         message_out = StatusUnprocessableResponse(request_id="")
 
-    await send_message(EXCHANGE_NAME, ROUTING_KEY_STATUS, message_out.model_dump())
+    await send_message(EXCHANGE_NAME, ROUTING_KEY_STATUS_CREATED, message_out.model_dump())
     logger.info(f"OUT: request_id={message_out.request_id}, request_status={message_out.request_status}")
 
 
@@ -96,7 +96,7 @@ async def request_exclude_user_from_group(user_id: UUID, group_id: PositiveInt, 
     else:
         message_out = StatusUnprocessableResponse(request_id="")
 
-    await send_message(EXCHANGE_NAME, ROUTING_KEY_STATUS, message_out.model_dump())
+    await send_message(EXCHANGE_NAME, ROUTING_KEY_STATUS_CREATED, message_out.model_dump())
     logger.info(f"OUT: request_id={message_out.request_id}, request_status={message_out.request_status}")
 
 
@@ -112,7 +112,7 @@ async def request_view_user_groups(user_id: UUID, token: str = Depends(oauth2_sc
     else:
         status = StatusUnprocessableResponse(request_id="")
 
-    await send_message(EXCHANGE_NAME, ROUTING_KEY_STATUS, status.model_dump())
+    await send_message(EXCHANGE_NAME, ROUTING_KEY_STATUS_CREATED, status.model_dump())
     logger.info(f"OUT: request_id={status.request_id}, request_status={status.request_status}")
 
 
@@ -128,7 +128,7 @@ async def request_get_resource_permission(user_id: UUID, resource_id: PositiveIn
     else:
         message_out = StatusUnprocessableResponse(request_id="")
 
-    await send_message(EXCHANGE_NAME, ROUTING_KEY_STATUS, message_out.model_dump())
+    await send_message(EXCHANGE_NAME, ROUTING_KEY_STATUS_CREATED, message_out.model_dump())
     logger.info(f"OUT: request_id={message_out.request_id}, request_status={message_out.request_status}")
 
 

@@ -9,7 +9,7 @@ from src.api import router
 from src.logger import logger
 from src.queue import (
     EXCHANGE_NAME,
-    ROUTING_KEY_STATUS,
+    ROUTING_KEY_STATUS_DONE,
     ROUTING_KEY_TASK,
     RabbitMQConnection,
     RabbitMQConsumer,
@@ -32,14 +32,16 @@ async def lifespan(app: FastAPI):
     logger.info("Connected to RabbitMQ")
 
     async def handle_message(message: dict[str, Any], routing_key: str):
-        if routing_key in (ROUTING_KEY_TASK, ROUTING_KEY_STATUS):
+        if routing_key in (ROUTING_KEY_TASK, ROUTING_KEY_STATUS_DONE):
             logger.info(f" IN: request_id={message['request_id']}, routing_key={routing_key}")
 
     asyncio.create_task(
         consumer.consume(EXCHANGE_NAME, ROUTING_KEY_TASK, lambda msg: handle_message(msg, ROUTING_KEY_TASK))
     )
     asyncio.create_task(
-        consumer.consume(EXCHANGE_NAME, ROUTING_KEY_STATUS, lambda msg: handle_message(msg, ROUTING_KEY_STATUS))
+        consumer.consume(
+            EXCHANGE_NAME, ROUTING_KEY_STATUS_DONE, lambda msg: handle_message(msg, ROUTING_KEY_STATUS_DONE)
+        )
     )
 
     yield
