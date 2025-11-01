@@ -29,16 +29,11 @@ last_status_message: dict[str, Any] | None = None
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await rabbit_connection.connect()
+    logger.info("Connected to RabbitMQ")
 
     async def handle_message(message: dict[str, Any], routing_key: str):
-        if routing_key == ROUTING_KEY_TASK:
-            logger.info(
-                f"Message received: routing_key={routing_key},   request_id={message['request_id']}, type={message['request_type']}"
-            )
-        elif routing_key == ROUTING_KEY_STATUS:
-            logger.info(
-                f"Message received: routing_key={routing_key}, request_id={message['request_id']}, status={message['request_status']}"
-            )
+        if routing_key in (ROUTING_KEY_TASK, ROUTING_KEY_STATUS):
+            logger.info(f" IN: request_id={message['request_id']}, routing_key={routing_key}")
 
     asyncio.create_task(
         consumer.consume(EXCHANGE_NAME, ROUTING_KEY_TASK, lambda msg: handle_message(msg, ROUTING_KEY_TASK))
@@ -50,6 +45,7 @@ async def lifespan(app: FastAPI):
     yield
 
     await rabbit_connection.close()
+    logger.info("Disconnected from RabbitMQ")
 
 
 app = FastAPI(lifespan=lifespan)
