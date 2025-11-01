@@ -13,4 +13,4 @@ router = APIRouter(tags=["Ping"])
 async def ping_database():
     async with httpx.AsyncClient() as client:
         response = await client.post(DB_BASE + Routes.Open.PING)
-        return {"from_database_service": response.json()}
+        return response.json()
