@@ -28,22 +28,25 @@ class Routes:
         RESOURCE_IN_PERMISSION = "/access/check/resource-in-permission"
 
         class User:
+            NAME = "/database/users/{user_id}"
             GROUPS = "/access/view/user-groups"
             PERMISSIONS = "/access/view/user-permissions"
             RESOURCES = "/access/view/user-resources"
 
         class Group:
+            NAME = "/database/groups/{group_id}"
             USERS = "/access/view/group-users"
             PERMISSIONS = "/access/view/group-permissions"
             RESOURCES = "/access/view/group-resources"
 
         class Permission:
-            ID = "/database/permissions/{permission_id}"
+            NAME = "/database/permissions/{permission_id}"
             GROUPS = "/access/view/permission-groups"
             USERS = "/access/view/permission-users"
             RESOURCES = "/access/view/permission-resources"
 
         class Resource:
+            NAME = "/database/resources/{resource_id}"
             USERS = "/access/view/resource-users"
             GROUPS = "/access/view/resource-groups"
             PERMISSIONS = "/access/view/resource-permissions"

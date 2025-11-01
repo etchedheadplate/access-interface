@@ -82,6 +82,8 @@ class JoinGroupCreator(TaskCreator):
         group_id: PositiveInt = cast(PositiveInt, args["group_id"])
 
         try:
+            get_group_name = await call_route(route=Routes.Private.Group.NAME.format(group_id=group_id), params=None)
+            group_name = get_group_name["name"]
             get_user_groups = await call_route(route=Routes.Private.User.GROUPS, params={"user_id": self.user_id})
             user_groups = [group["name"] for group in get_user_groups]
 
@@ -92,6 +94,7 @@ class JoinGroupCreator(TaskCreator):
 
         except Exception:
             self.error = True
+            group_name = ""
             user_groups = []
             user_permissions = []
 
@@ -99,6 +102,7 @@ class JoinGroupCreator(TaskCreator):
             request_id=self.request_id,
             user_id=self.user_id,
             group_id=group_id,
+            group_name=group_name,
             user_groups=user_groups,
             user_permissions=user_permissions,
             error=self.error,
@@ -121,10 +125,23 @@ class ExcludeFromGroupCreator(TaskCreator):
     async def _construct(self, **args: Any) -> ExcludeFromGroupTask:
         group_id: PositiveInt = cast(PositiveInt, args["group_id"])
 
+        try:
+            get_group_name = await call_route(route=Routes.Private.Group.NAME.format(group_id=group_id), params=None)
+            group_name = get_group_name["name"]
+            get_user_groups = await call_route(route=Routes.Private.User.GROUPS, params={"user_id": self.user_id})
+            user_groups = [group["name"] for group in get_user_groups]
+
+        except Exception:
+            self.error = True
+            group_name = ""
+            user_groups = []
+
         return ExcludeFromGroupTask(
             request_id=self.request_id,
             user_id=self.user_id,
             group_id=group_id,
+            group_name=group_name,
+            user_groups=user_groups,
             error=self.error,
         )
 
