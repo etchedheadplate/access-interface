@@ -4,49 +4,53 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-DB_BASE = str(os.environ.get("DB_SERVICE_BASE_URL"))
+DB_BASE: str = str(os.environ.get("DB_SERVICE_BASE_URL"))
 
 
 class Routes:
     class Open:
-        PING = "/ping"
+        PING: str = "/ping"
 
         class Auth:
-            REGISTER = "/auth/register"
-            LOGIN = "/auth/login"
-            CHECK = "/auth"
+            REGISTER: str = "/auth/register"
+            LOGIN: str = "/auth/login"
+            CHECK: str = "/auth"
 
         class DB:
-            USERS = "/database/users/"
-            GROUPS = "/database/groups"
-            PERMISSIONS = "/database/permissions"
-            RESOURCES = "/database/resources"
+            USERS: str = "/database/users/"
+            GROUPS: str = "/database/groups/"
+            PERMISSIONS: str = "/database/permissions/"
+            RESOURCES: str = "/database/resources/"
+
+            USER_GROUPS: str = "/access/view/user-groups"
+            USER_PERMISSIONS: str = "/access/view/user-permissions"
+            USER_RESOURCES: str = "/access/view/user-resources"
 
     class Private:
-        USER_IN_GROUP = "/access/check/user-in-group"
-        PERMISSION_IN_GROUP = "/access/check/permission-in-group"
-        RESOURCE_IN_PERMISSION = "/access/check/resource-in-permission"
+        USER_IN_GROUP: str = "/access/check/user-in-group"
+        PERMISSION_IN_GROUP: str = "/access/check/permission-in-group"
+        RESOURCE_IN_PERMISSION: str = "/access/check/resource-in-permission"
 
         class User:
-            NAME = "/database/users/{user_id}"
-            GROUPS = "/access/view/user-groups"
-            PERMISSIONS = "/access/view/user-permissions"
-            RESOURCES = "/access/view/user-resources"
+            NAME: str = "/database/users/{user_id}"
+            GROUPS: str = "/access/view/user-groups"
+            PERMISSIONS: str = "/access/view/user-permissions"
+            RESOURCES: str = "/access/view/user-resources"
 
         class Group:
-            NAME = "/database/groups/{group_id}"
-            USERS = "/access/view/group-users"
-            PERMISSIONS = "/access/view/group-permissions"
-            RESOURCES = "/access/view/group-resources"
+            NAME: str = "/database/groups/{group_id}"
+            USERS: str = "/access/view/group-users"
+            PERMISSIONS: str = "/access/view/group-permissions"
+            RESOURCES: str = "/access/view/group-resources"
 
         class Permission:
-            NAME = "/database/permissions/{permission_id}"
-            GROUPS = "/access/view/permission-groups"
-            USERS = "/access/view/permission-users"
-            RESOURCES = "/access/view/permission-resources"
+            NAME: str = "/database/permissions/{permission_id}"
+            GROUPS: str = "/access/view/permission-groups"
+            USERS: str = "/access/view/permission-users"
+            RESOURCES: str = "/access/view/permission-resources"
 
         class Resource:
-            NAME = "/database/resources/{resource_id}"
-            USERS = "/access/view/resource-users"
-            GROUPS = "/access/view/resource-groups"
-            PERMISSIONS = "/access/view/resource-permissions"
+            NAME: str = "/database/resources/{resource_id}"
+            USERS: str = "/access/view/resource-users"
+            GROUPS: str = "/access/view/resource-groups"
+            PERMISSIONS: str = "/access/view/resource-permissions"
