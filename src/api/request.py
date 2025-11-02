@@ -8,6 +8,7 @@ from src.api.auth import oauth2_scheme
 from src.logger import logger
 from src.queue import EXCHANGE_NAME, ROUTING_KEY_STATUS_CREATED, ROUTING_KEY_TASK, send_message
 from src.services.status.schemas import (
+    BaseStatus,
     StatusCreatedResponse,
     StatusNotFoundResponse,
     StatusUnprocessableResponse,
@@ -20,17 +21,16 @@ router = APIRouter(prefix="/request", tags=["Request"])
 create_router = APIRouter(prefix="/create")
 
 
-@router.get("/status", response_model=StatusNotFoundResponse)
+@router.get("/status", response_model=BaseStatus)
 async def check_request_status(request: Request, request_id: str, token: str = Depends(oauth2_scheme)):
-    last_status_message = request.app.state.last_status_message()
-
-    if not last_status_message or not last_status_message[request_id]:
+    try:
+        last_status_message = request.app.state.last_status_message()
+        return last_status_message[request_id]
+    except Exception:
         return StatusNotFoundResponse(request_id=request_id)
 
-    return last_status_message[request_id]
 
-
-@create_router.post("/permission-access")
+@create_router.post("/permission-access", response_model=BaseStatus)
 async def request_give_permission_to_user(
     user_id: UUID, permission_id: PositiveInt, token: str = Depends(oauth2_scheme)
 ):
@@ -50,7 +50,7 @@ async def request_give_permission_to_user(
     return message_out
 
 
-@create_router.post("/join-group")
+@create_router.post("/join-group", response_model=BaseStatus)
 async def request_add_user_to_group(user_id: UUID, group_id: PositiveInt, token: str = Depends(oauth2_scheme)):
     request_type = "join_group"
     request = get_task_creator(request_type, user_id)
@@ -68,7 +68,7 @@ async def request_add_user_to_group(user_id: UUID, group_id: PositiveInt, token:
     return message_out
 
 
-@create_router.post("/remove-permission")
+@create_router.post("/remove-permission", response_model=BaseStatus)
 async def request_remove_permission_from_user(
     user_id: UUID, permission_id: PositiveInt, token: str = Depends(oauth2_scheme)
 ):
@@ -88,7 +88,7 @@ async def request_remove_permission_from_user(
     return message_out
 
 
-@create_router.post("/exclude-from-group")
+@create_router.post("/exclude-from-group", response_model=BaseStatus)
 async def request_exclude_user_from_group(user_id: UUID, group_id: PositiveInt, token: str = Depends(oauth2_scheme)):
     request_type = "exclude_from_group"
     request = get_task_creator(request_type, user_id)
@@ -106,7 +106,7 @@ async def request_exclude_user_from_group(user_id: UUID, group_id: PositiveInt, 
     return message_out
 
 
-@create_router.post("/view-user-groups")
+@create_router.post("/view-user-groups", response_model=BaseStatus)
 async def request_view_user_groups(user_id: UUID, token: str = Depends(oauth2_scheme)):
     request_type = "view_user_groups"
     request = get_task_creator(request_type, user_id)
@@ -124,7 +124,7 @@ async def request_view_user_groups(user_id: UUID, token: str = Depends(oauth2_sc
     return message_out
 
 
-@create_router.post("/get-resource-permission")
+@create_router.post("/get-resource-permission", response_model=BaseStatus)
 async def request_get_resource_permission(user_id: UUID, resource_id: PositiveInt, token: str = Depends(oauth2_scheme)):
     request_type = "get_resource_permission"
     request = get_task_creator(request_type, user_id)
