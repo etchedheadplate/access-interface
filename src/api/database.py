@@ -22,7 +22,7 @@ async def get_users(token: str = Depends(oauth2_scheme)):
         return response.json()
 
 
-@router.get("/user-groups")
+@router.get("/user-groups", include_in_schema=False)
 async def get_user_groups(user_id: UUID, token: str = Depends(oauth2_scheme)):
     url = DB_BASE + Routes.Open.DB.USER_GROUPS  # type: ignore
     params = {"user_id": str(user_id)}

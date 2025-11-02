@@ -20,7 +20,7 @@ async def register(username: EmailStr = Form(...), password: str = Form(...)):
         return response.json()
 
 
-@router.post("/login")
+@router.post("/login", include_in_schema=False)
 async def login(username: EmailStr = Form(...), password: str = Form(...)):
     request = LoginRequest(username=username, password=password)
     async with httpx.AsyncClient() as client:
