@@ -31,7 +31,9 @@ async def check_request_status(request: Request, request_id: str, token: str = D
 
 
 @create_router.post("/permission-access")
-async def request_permission_access(user_id: UUID, permission_id: PositiveInt, token: str = Depends(oauth2_scheme)):
+async def request_give_permission_to_user(
+    user_id: UUID, permission_id: PositiveInt, token: str = Depends(oauth2_scheme)
+):
     request_type = "access_permission"
     request = get_task_creator(request_type, user_id)
     task = await request.create(permission_id=permission_id)
@@ -49,7 +51,7 @@ async def request_permission_access(user_id: UUID, permission_id: PositiveInt, t
 
 
 @create_router.post("/join-group")
-async def request_join_group(user_id: UUID, group_id: PositiveInt, token: str = Depends(oauth2_scheme)):
+async def request_add_user_to_group(user_id: UUID, group_id: PositiveInt, token: str = Depends(oauth2_scheme)):
     request_type = "join_group"
     request = get_task_creator(request_type, user_id)
     task = await request.create(group_id=group_id)
@@ -67,7 +69,7 @@ async def request_join_group(user_id: UUID, group_id: PositiveInt, token: str = 
 
 
 @create_router.post("/remove-permission")
-async def request_remove_user_permission(
+async def request_remove_permission_from_user(
     user_id: UUID, permission_id: PositiveInt, token: str = Depends(oauth2_scheme)
 ):
     request_type = "remove_permission"
