@@ -13,7 +13,7 @@ router = APIRouter(tags=["Auth"])
 
 
 @router.post("/register")
-async def register(username: EmailStr, password: str):
+async def register(username: EmailStr = Form(...), password: str = Form(...)):
     request = RegisterRequest(email=username, password=password)
     async with httpx.AsyncClient() as client:
         response = await client.post(DB_BASE + Routes.Open.Auth.REGISTER, json=request.model_dump())
