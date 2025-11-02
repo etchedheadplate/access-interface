@@ -26,11 +26,12 @@ class RabbitMQConsumer:
             exchange_name, aio_pika.ExchangeType.TOPIC, durable=True
         )
 
-        queue_name = f"{exchange_name}_{self.service_name}"
+        queue_suffix = routing_key.split(".")[-1] if "." in routing_key else routing_key
+        queue_name = f"{exchange_name}_{self.service_name}_{queue_suffix}"
         queue = await self.connection.channel.declare_queue(queue_name, durable=True)
         await queue.bind(exchange, routing_key)
 
-        logger.info(f"SUB: exchange={exchange_name}, queue={queue}, topic={routing_key}")
+        logger.info(f"SUB: exchange={exchange_name}, queue={queue_name}, topic={routing_key}")
 
         async with queue.iterator() as queue_iter:
             async for message in queue_iter:

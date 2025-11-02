@@ -14,7 +14,6 @@ from src.queue import (
     ROUTING_KEY_STATUS_REJECTED,
     ROUTING_KEY_STATUS_UNPROCESSABLE,
     ROUTING_KEY_STATUS_VALIDATED,
-    ROUTING_KEY_TASK,
     RabbitMQConnection,
     RabbitMQConsumer,
     RabbitMQProducer,
@@ -43,17 +42,14 @@ async def lifespan(app: FastAPI):
     logger.info("Connected to RabbitMQ")
 
     async def handle_message(message: dict[str, Any], routing_key: str):
-        if routing_key in (ROUTING_KEY_TASK, *ROUTING_KEYS_STATUS):
-            logger.info(f" IN: request_id={message['request_id']}, routing_key={routing_key}")
-        if routing_key in ROUTING_KEYS_STATUS:
-            request_id = message["request_id"]
-            last_status_message[request_id] = message
+        request_id = message["request_id"]
+        last_status_message[request_id] = message
+        logger.info(f" IN: request_id={request_id}, routing_key={routing_key}")
 
-    async def start_consumer(routing_key: str):
-        await consumer.consume(EXCHANGE_NAME, routing_key, lambda msg: handle_message(msg, routing_key))
-
-    for routing_key in [ROUTING_KEY_TASK, *ROUTING_KEYS_STATUS]:
-        asyncio.create_task(start_consumer(routing_key))
+    for routing_key in ROUTING_KEYS_STATUS:
+        asyncio.create_task(
+            consumer.consume(EXCHANGE_NAME, routing_key, lambda msg, rk=routing_key: handle_message(msg, rk))
+        )
 
     yield
 
