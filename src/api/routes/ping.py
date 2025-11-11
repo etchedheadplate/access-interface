@@ -1,16 +1,16 @@
+from urllib.parse import urljoin
+
 import httpx
-from dotenv import load_dotenv
 from fastapi import APIRouter
 
-from src.api.config import DB_BASE, Routes
-
-load_dotenv()
+from src.config import Settings
 
 router = APIRouter(tags=["Ping"])
+settings = Settings()  # type: ignore[call-arg]
 
 
 @router.get("/ping")
 async def ping_database():
     async with httpx.AsyncClient() as client:
-        response = await client.post(DB_BASE + Routes.Open.PING)
+        response = await client.post(urljoin(settings.DB_SERVICE_BASE_URL, "/ping"))
         return response.json()

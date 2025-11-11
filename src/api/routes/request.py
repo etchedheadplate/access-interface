@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from fastapi import APIRouter, Depends, Request
 from pydantic import PositiveInt
 
-from src.api.auth import oauth2_scheme
+from src.api.dependancies import oauth2_scheme
 from src.logger import logger
 from src.queue import EXCHANGE_NAME, ROUTING_KEY_STATUS_CREATED, ROUTING_KEY_TASK, send_message
 from src.services.status.schemas import (
