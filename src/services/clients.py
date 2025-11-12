@@ -32,7 +32,7 @@ class Client:
         return urljoin(base, endpoint)
 
     @staticmethod
-    def create_headers(token: str) -> dict[str, str]:
+    def create_headers(token: str | None = None) -> dict[str, str]:
         return {"Authorization": f"Bearer {token}"}
 
     async def _request(
@@ -71,22 +71,22 @@ class UserClient(Client):
     async def login(self, request: LoginRequest) -> dict[str, Any]:
         return await self._request("POST", self._login_endpoint, data=request.model_dump())
 
-    async def get(self, user_id: UUID, token: str) -> dict[str, Any]:
+    async def get(self, user_id: UUID, token: str | None = None) -> dict[str, Any]:
         endpoint = f"{self._get_endpoint}{user_id}/"
         return await self._request("GET", endpoint, token=token)
 
-    async def get_all(self, token: str) -> dict[str, Any]:
+    async def get_all(self, token: str | None = None) -> dict[str, Any]:
         return await self._request("GET", self._get_endpoint, token=token)
 
-    async def get_groups(self, user_id: UUID, token: str) -> dict[str, Any]:
+    async def get_groups(self, user_id: UUID, token: str | None = None) -> dict[str, Any]:
         params = {"user_id": user_id}
         return await self._request("GET", self._get_groups_endpoint, token=token, params=params)
 
-    async def get_permissions(self, user_id: UUID, token: str) -> dict[str, Any]:
+    async def get_permissions(self, user_id: UUID, token: str | None = None) -> dict[str, Any]:
         params = {"user_id": user_id}
         return await self._request("GET", self._get_permissions_endpoint, token=token, params=params)
 
-    async def get_resources(self, user_id: UUID, token: str) -> dict[str, Any]:
+    async def get_resources(self, user_id: UUID, token: str | None = None) -> dict[str, Any]:
         params = {"user_id": user_id}
         return await self._request("GET", self._get_resources_endpoint, token=token, params=params)
 
@@ -97,22 +97,22 @@ class GroupClient(Client):
     _get_permissions_endpoint = "/access/view/group-permissions"
     _get_resources_endpoint = "/access/view/group-resources"
 
-    async def get(self, group_id: int, token: str) -> dict[str, Any]:
+    async def get(self, group_id: int, token: str | None = None) -> dict[str, Any]:
         endpoint = f"{self._get_endpoint}{group_id}/"
         return await self._request("GET", endpoint, token=token)
 
-    async def get_all(self, token: str) -> dict[str, Any]:
+    async def get_all(self, token: str | None = None) -> dict[str, Any]:
         return await self._request("GET", self._get_endpoint, token=token)
 
-    async def get_users(self, group_id: int, token: str) -> dict[str, Any]:
+    async def get_users(self, group_id: int, token: str | None = None) -> dict[str, Any]:
         params = {"group_id": group_id}
         return await self._request("GET", self._get_users_endpoint, token=token, params=params)
 
-    async def get_permissions(self, group_id: int, token: str) -> dict[str, Any]:
+    async def get_permissions(self, group_id: int, token: str | None = None) -> dict[str, Any]:
         params = {"group_id": group_id}
         return await self._request("GET", self._get_permissions_endpoint, token=token, params=params)
 
-    async def get_resources(self, group_id: int, token: str) -> dict[str, Any]:
+    async def get_resources(self, group_id: int, token: str | None = None) -> dict[str, Any]:
         params = {"group_id": group_id}
         return await self._request("GET", self._get_resources_endpoint, token=token, params=params)
 
@@ -123,22 +123,22 @@ class PermissionClient(Client):
     _get_users_endpoint = "/access/view/permission-users"
     _get_resources_endpoint = "/access/view/permission-resources"
 
-    async def get(self, permission_id: int, token: str) -> dict[str, Any]:
+    async def get(self, permission_id: int, token: str | None = None) -> dict[str, Any]:
         endpoint = f"{self._get_endpoint}{permission_id}/"
         return await self._request("GET", endpoint, token=token)
 
-    async def get_all(self, token: str) -> dict[str, Any]:
+    async def get_all(self, token: str | None = None) -> dict[str, Any]:
         return await self._request("GET", self._get_endpoint, token=token)
 
-    async def get_groups(self, permission_id: int, token: str) -> dict[str, Any]:
+    async def get_groups(self, permission_id: int, token: str | None = None) -> dict[str, Any]:
         params = {"permission_id": permission_id}
         return await self._request("GET", self._get_groups_endpoint, token=token, params=params)
 
-    async def get_users(self, permission_id: int, token: str) -> dict[str, Any]:
+    async def get_users(self, permission_id: int, token: str | None = None) -> dict[str, Any]:
         params = {"permission_id": permission_id}
         return await self._request("GET", self._get_users_endpoint, token=token, params=params)
 
-    async def get_resources(self, permission_id: int, token: str) -> dict[str, Any]:
+    async def get_resources(self, permission_id: int, token: str | None = None) -> dict[str, Any]:
         params = {"permission_id": permission_id}
         return await self._request("GET", self._get_resources_endpoint, token=token, params=params)
 
@@ -149,21 +149,21 @@ class ResourceClient(Client):
     _get_groups_endpoint = "/access/view/resource-groups"
     _get_permissions_endpoint = "/access/view/resource-permissions"
 
-    async def get(self, resource_id: int, token: str) -> dict[str, Any]:
+    async def get(self, resource_id: int, token: str | None = None) -> dict[str, Any]:
         endpoint = f"{self._get_endpoint}{resource_id}/"
         return await self._request("GET", endpoint, token=token)
 
-    async def get_all(self, token: str) -> dict[str, Any]:
+    async def get_all(self, token: str | None = None) -> dict[str, Any]:
         return await self._request("GET", self._get_endpoint, token=token)
 
-    async def get_users(self, resource_id: int, token: str) -> dict[str, Any]:
+    async def get_users(self, resource_id: int, token: str | None = None) -> dict[str, Any]:
         params = {"resource_id": resource_id}
         return await self._request("GET", self._get_users_endpoint, token=token, params=params)
 
-    async def get_groups(self, resource_id: int, token: str) -> dict[str, Any]:
+    async def get_groups(self, resource_id: int, token: str | None = None) -> dict[str, Any]:
         params = {"resource_id": resource_id}
         return await self._request("GET", self._get_groups_endpoint, token=token, params=params)
 
-    async def get_permissions(self, resource_id: int, token: str) -> dict[str, Any]:
+    async def get_permissions(self, resource_id: int, token: str | None = None) -> dict[str, Any]:
         params = {"resource_id": resource_id}
         return await self._request("GET", self._get_permissions_endpoint, token=token, params=params)
