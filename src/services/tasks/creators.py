@@ -3,7 +3,7 @@ from uuid import UUID
 
 from pydantic import PositiveInt
 
-from src.api.config import Routes
+from src.services.clients import GroupClient, PermissionClient, UserClient
 from src.services.tasks.schemas import (
     AccessPermissionTask,
     ExcludeFromGroupTask,
@@ -12,14 +12,14 @@ from src.services.tasks.schemas import (
     RemovePermissionTask,
     ViewUserGroupsTask,
 )
-from src.services.tasks.utils import call_route, generate_id
+from src.services.tasks.utils import generate_id
 
 
 class TaskCreator:
     def __init__(self, request_type: str, user_id: UUID):
         self.request_id = generate_id()
         self.request_type = request_type
-        self.user_id = str(user_id)
+        self.user_id = user_id
         self.error = False
         self.result: str | list[str] = ""
 
@@ -54,13 +54,13 @@ class AccessPermissionCreator(TaskCreator):
         permission_id: PositiveInt = cast(PositiveInt, args["permission_id"])
 
         try:
-            get_permission_groups = await call_route(
-                route=Routes.Private.Permission.GROUPS, params={"permission_id": permission_id}
-            )
-            permission_groups = [group["name"] for group in get_permission_groups]
+            async with PermissionClient() as permission_client:
+                get_permission_groups = await permission_client.get_groups(permission_id=permission_id)
+            permission_groups = [group["name"] for group in get_permission_groups]  # type: ignore[index]
 
-            get_user_groups = await call_route(route=Routes.Private.User.GROUPS, params={"user_id": self.user_id})
-            user_groups = [group["name"] for group in get_user_groups]
+            async with UserClient() as user_client:
+                get_user_groups = await user_client.get_groups(user_id=self.user_id)
+            user_groups = [group["name"] for group in get_user_groups]  # type: ignore[index]
 
         except Exception:
             self.error = True
@@ -69,7 +69,7 @@ class AccessPermissionCreator(TaskCreator):
 
         return AccessPermissionTask(
             request_id=self.request_id,
-            user_id=self.user_id,
+            user_id=str(self.user_id),
             permission_id=permission_id,
             permission_groups=permission_groups,
             user_groups=user_groups,
@@ -82,15 +82,15 @@ class JoinGroupCreator(TaskCreator):
         group_id: PositiveInt = cast(PositiveInt, args["group_id"])
 
         try:
-            get_group_name = await call_route(route=Routes.Private.Group.NAME.format(group_id=group_id), params=None)
+            async with GroupClient() as group_client:
+                get_group_name = await group_client.get(group_id=group_id)
             group_name = get_group_name["name"]
-            get_user_groups = await call_route(route=Routes.Private.User.GROUPS, params={"user_id": self.user_id})
-            user_groups = [group["name"] for group in get_user_groups]
 
-            get_user_permissions = await call_route(
-                route=Routes.Private.User.PERMISSIONS, params={"user_id": self.user_id}
-            )
-            user_permissions = [permission["name"] for permission in get_user_permissions]
+            async with UserClient() as user_client:
+                get_user_groups = await user_client.get_groups(user_id=self.user_id)
+                get_user_permissions = await user_client.get_permissions(user_id=self.user_id)
+            user_groups = [group["name"] for group in get_user_groups]  # type: ignore[index]
+            user_permissions = [permission["name"] for permission in get_user_permissions]  # type: ignore[index]
 
         except Exception:
             self.error = True
@@ -100,7 +100,7 @@ class JoinGroupCreator(TaskCreator):
 
         return JoinGroupTask(
             request_id=self.request_id,
-            user_id=self.user_id,
+            user_id=str(self.user_id),
             group_id=group_id,
             group_name=group_name,
             user_groups=user_groups,
@@ -115,7 +115,7 @@ class RemovePermissionCreator(TaskCreator):
 
         return RemovePermissionTask(
             request_id=self.request_id,
-            user_id=self.user_id,
+            user_id=str(self.user_id),
             permission_id=permission_id,
             error=self.error,
         )
@@ -126,10 +126,13 @@ class ExcludeFromGroupCreator(TaskCreator):
         group_id: PositiveInt = cast(PositiveInt, args["group_id"])
 
         try:
-            get_group_name = await call_route(route=Routes.Private.Group.NAME.format(group_id=group_id), params=None)
+            async with GroupClient() as group_client:
+                get_group_name = await group_client.get(group_id=group_id)
             group_name = get_group_name["name"]
-            get_user_groups = await call_route(route=Routes.Private.User.GROUPS, params={"user_id": self.user_id})
-            user_groups = [group["name"] for group in get_user_groups]
+
+            async with UserClient() as user_client:
+                get_user_groups = await user_client.get_groups(user_id=self.user_id)
+            user_groups = [group["name"] for group in get_user_groups]  # type: ignore[index]
 
         except Exception:
             self.error = True
@@ -138,7 +141,7 @@ class ExcludeFromGroupCreator(TaskCreator):
 
         return ExcludeFromGroupTask(
             request_id=self.request_id,
-            user_id=self.user_id,
+            user_id=str(self.user_id),
             group_id=group_id,
             group_name=group_name,
             user_groups=user_groups,
@@ -151,7 +154,7 @@ class ViewUserGroupsCreator(TaskCreator):
 
         return ViewUserGroupsTask(
             request_id=self.request_id,
-            user_id=self.user_id,
+            user_id=str(self.user_id),
             error=self.error,
         )
 
@@ -162,7 +165,7 @@ class GetResourcePermissionCreator(TaskCreator):
 
         return GetResourcePermissionTask(
             request_id=self.request_id,
-            user_id=self.user_id,
+            user_id=str(self.user_id),
             resource_id=resource_id,
             error=self.error,
         )
