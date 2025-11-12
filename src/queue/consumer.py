@@ -4,16 +4,17 @@ from typing import Any
 
 import aio_pika
 
+from src.config import Settings
 from src.logger import logger
 
-from .config import SERVICE_NAME
 from .connection import RabbitMQConnection
 
 
 class RabbitMQConsumer:
     def __init__(self, connection: RabbitMQConnection):
+        settings = Settings()  # type: ignore[call-arg]
         self.connection = connection
-        self.service_name = SERVICE_NAME
+        self.service_name = settings.SERVICE_NAME
 
     async def consume(self, exchange_name: str, routing_key: str, callback: Callable[[Any], Awaitable[None]]):
         if not self.connection.channel:

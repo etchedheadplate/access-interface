@@ -1,12 +1,9 @@
-from dotenv import load_dotenv
 from fastapi import APIRouter, Depends, Form
 from pydantic import EmailStr
 
 from src.api.dependancies import get_user_client
 from src.api.schemas import LoginRequest, RegisterRequest
 from src.services.clients import UserClient
-
-load_dotenv()
 
 router = APIRouter(tags=["Auth"])
 

@@ -2,24 +2,19 @@ import asyncio
 from contextlib import asynccontextmanager
 from typing import Any
 
-from dotenv import load_dotenv
 from fastapi import FastAPI
 
 from src.api import router
+from src.config import Settings
 from src.logger import logger
 from src.queue import (
-    EXCHANGE_NAME,
-    ROUTING_KEY_STATUS_CREATED,
-    ROUTING_KEY_STATUS_DONE,
-    ROUTING_KEY_STATUS_REJECTED,
-    ROUTING_KEY_STATUS_UNPROCESSABLE,
-    ROUTING_KEY_STATUS_VALIDATED,
     RabbitMQConnection,
     RabbitMQConsumer,
     RabbitMQProducer,
 )
 
-load_dotenv()
+settings = Settings()  # type: ignore[call-arg]
+
 
 rabbit_connection = RabbitMQConnection()
 producer = RabbitMQProducer(rabbit_connection)
@@ -28,11 +23,11 @@ consumer = RabbitMQConsumer(rabbit_connection)
 last_status_message: dict[str, Any] = {}
 
 ROUTING_KEYS_STATUS = [
-    ROUTING_KEY_STATUS_CREATED,
-    ROUTING_KEY_STATUS_VALIDATED,
-    ROUTING_KEY_STATUS_REJECTED,
-    ROUTING_KEY_STATUS_DONE,
-    ROUTING_KEY_STATUS_UNPROCESSABLE,
+    settings.ROUTING_KEY_STATUS_CREATED,
+    settings.ROUTING_KEY_STATUS_VALIDATED,
+    settings.ROUTING_KEY_STATUS_REJECTED,
+    settings.ROUTING_KEY_STATUS_DONE,
+    settings.ROUTING_KEY_STATUS_UNPROCESSABLE,
 ]
 
 
@@ -48,7 +43,7 @@ async def lifespan(app: FastAPI):
 
     for routing_key in ROUTING_KEYS_STATUS:
         asyncio.create_task(
-            consumer.consume(EXCHANGE_NAME, routing_key, lambda msg, rk=routing_key: handle_message(msg, rk))
+            consumer.consume(settings.EXCHANGE_NAME, routing_key, lambda msg, rk=routing_key: handle_message(msg, rk))
         )
 
     yield
