@@ -7,17 +7,12 @@ from fastapi import FastAPI
 from src.api import router
 from src.config import Settings
 from src.logger import logger
-from src.queue import (
-    RabbitMQConnection,
-    RabbitMQConsumer,
-    RabbitMQProducer,
-)
+from src.queue import RabbitMQConnection, RabbitMQConsumer
 
 settings = Settings()  # type: ignore[call-arg]
 
 
 rabbit_connection = RabbitMQConnection()
-producer = RabbitMQProducer(rabbit_connection)
 consumer = RabbitMQConsumer(rabbit_connection)
 
 last_status_message: dict[str, Any] = {}
@@ -33,9 +28,6 @@ ROUTING_KEYS_STATUS = [
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    await rabbit_connection.connect()
-    logger.info("Connected to RabbitMQ")
-
     async def handle_message(message: dict[str, Any], routing_key: str):
         request_id = message["request_id"]
         last_status_message[request_id] = message

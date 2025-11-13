@@ -1,6 +1,6 @@
 from src.config import Settings
 from src.logger import logger
-from src.queue.producer import send_message
+from src.queue import RabbitMQConnection, RabbitMQProducer
 from src.services.status.schemas import StatusCreatedResponse, StatusUnprocessableResponse
 from src.services.tasks.creators import (
     AccessPermissionTask,
@@ -31,6 +31,8 @@ class RequestWorker:
         self.task = task
         self.error = self._is_unprocessable()
         self.status = self._create_status()
+        self.connection = RabbitMQConnection()
+        self.producer = RabbitMQProducer(self.connection)
 
     def _is_unprocessable(self):
         return self.task.error
@@ -43,8 +45,8 @@ class RequestWorker:
 
     async def send_request(self):
         if not self.error:
-            await send_message(self.exchange_name, self.task_routing_key, self.task.model_dump())
+            await self.producer.send_message(self.exchange_name, self.task_routing_key, self.task.model_dump())
             logger.info(f"OUT: request_id={self.task.request_id}, request_status={self.task.request_type}")
-        await send_message(self.exchange_name, self.status_routing_key, self.status.model_dump())
+        await self.producer.send_message(self.exchange_name, self.status_routing_key, self.status.model_dump())
         logger.info(f"OUT: request_id={self.status.request_id}, request_status={self.status.request_status}")
         return self.status
