@@ -72,7 +72,7 @@ class UserClient(Client):
         return await self._request("POST", self._login_endpoint, data=request.model_dump())
 
     async def get(self, user_id: UUID, token: str | None = None) -> dict[str, Any]:
-        endpoint = f"{self._get_endpoint}{user_id}/"
+        endpoint = f"{self._get_endpoint}{user_id}"
         return await self._request("GET", endpoint, token=token)
 
     async def get_all(self, token: str | None = None) -> dict[str, Any]:
@@ -98,7 +98,7 @@ class GroupClient(Client):
     _get_resources_endpoint = "/access/view/group-resources"
 
     async def get(self, group_id: int, token: str | None = None) -> dict[str, Any]:
-        endpoint = f"{self._get_endpoint}{group_id}/"
+        endpoint = f"{self._get_endpoint}{group_id}"
         return await self._request("GET", endpoint, token=token)
 
     async def get_all(self, token: str | None = None) -> dict[str, Any]:
@@ -124,7 +124,7 @@ class PermissionClient(Client):
     _get_resources_endpoint = "/access/view/permission-resources"
 
     async def get(self, permission_id: int, token: str | None = None) -> dict[str, Any]:
-        endpoint = f"{self._get_endpoint}{permission_id}/"
+        endpoint = f"{self._get_endpoint}{permission_id}"
         return await self._request("GET", endpoint, token=token)
 
     async def get_all(self, token: str | None = None) -> dict[str, Any]:
@@ -150,7 +150,7 @@ class ResourceClient(Client):
     _get_permissions_endpoint = "/access/view/resource-permissions"
 
     async def get(self, resource_id: int, token: str | None = None) -> dict[str, Any]:
-        endpoint = f"{self._get_endpoint}{resource_id}/"
+        endpoint = f"{self._get_endpoint}{resource_id}"
         return await self._request("GET", endpoint, token=token)
 
     async def get_all(self, token: str | None = None) -> dict[str, Any]:
