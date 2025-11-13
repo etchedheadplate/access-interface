@@ -1,3 +1,5 @@
+import secrets
+import string
 from typing import Any, cast
 from uuid import UUID
 
@@ -12,16 +14,19 @@ from src.services.tasks.schemas import (
     RemovePermissionTask,
     ViewUserGroupsTask,
 )
-from src.services.tasks.utils import generate_id
 
 
 class TaskCreator:
     def __init__(self, request_type: str, user_id: UUID):
-        self.request_id = generate_id()
+        self.request_id = self._generate_id()
         self.request_type = request_type
         self.user_id = user_id
         self.error = False
         self.result: str | list[str] = ""
+
+    def _generate_id(self, length: int = 8) -> str:
+        alphabet = string.ascii_letters + string.digits
+        return "".join(secrets.choice(alphabet) for _ in range(length))
 
     async def create(
         self, **args: Any
